@@ -6,16 +6,29 @@
   <title>Dashboard - Freight Coastals</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    /* Dashboard-specific overrides */
+    .stat-card { transition: transform 0.2s, box-shadow 0.2s; }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+    .panel { transition: box-shadow 0.2s; }
+    .panel:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+    table tr { transition: background 0.2s; }
+    table tbody tr:hover { background: #f0fdf4; }
+    .sidebar-nav li a { transition: all 0.2s; }
+  </style>
 </head>
 <body>
 
   <!-- NAVBAR -->
   <nav class="navbar">
-    <a href="index.html" class="logo">⚓ Freight <span>Coastals</span></a>
-    <ul class="nav-links">
+    <div style="display:flex;align-items:center;gap:16px">
+      <button class="mobile-toggle" onclick="document.querySelector('.sidebar').classList.toggle('mobile-open')" style="display:none">☰</button>
+      <a href="index.html" class="logo">⚓ Freight <span>Coastals</span></a>
+    </div>
+    <ul class="nav-links" style="display:flex">
       <li><a href="index.html">Home</a></li>
       <li>
-        <a href="#" id="notifToggle" class="notif-badge">
+        <a href="#" id="notifToggle" class="notif-badge" title="Notifications">
           🔔 <span class="count">3</span>
         </a>
       </li>
@@ -30,14 +43,16 @@
     <aside class="sidebar">
       <div class="sidebar-user">
         <div class="avatar">AE</div>
-        <div class="name">Apex Electronics</div>
-        <div class="role">Customer Account</div>
+        <div>
+          <div class="name">Apex Electronics</div>
+          <div class="role">Customer Account</div>
+        </div>
       </div>
       <ul class="sidebar-nav">
-        <li><a href="#" class="active"><span class="icon">📊</span> Dashboard</a></li>
+        <li><a href="#top" class="active"><span class="icon">📊</span> Dashboard</a></li>
         <li><a href="#shipments-section"><span class="icon">📦</span> My Shipments</a></li>
         <li><a href="#map-section"><span class="icon">🗺</span> Live Map</a></li>
-        <li><a href="#" onclick="document.getElementById('notificationPanel').classList.toggle('open')"><span class="icon">🔔</span> Notifications <span class="badge badge-danger" style="margin-left:auto;font-size:0.65rem">3</span></a></li>
+        <li><a href="#" onclick="event.preventDefault();document.getElementById('notificationPanel').classList.toggle('open')"><span class="icon">🔔</span> Notifications <span class="badge badge-danger" style="margin-left:auto;font-size:0.65rem;padding:2px 8px">3</span></a></li>
         <li><a href="#"><span class="icon">📄</span> Documents</a></li>
         <li><a href="#"><span class="icon">💰</span> Invoices</a></li>
         <li><a href="#"><span class="icon">⚙</span> Settings</a></li>
@@ -46,17 +61,17 @@
     </aside>
 
     <!-- MAIN CONTENT -->
-    <main class="main-content">
+    <main class="main-content" id="top">
 
       <!-- PAGE HEADER -->
       <div class="page-header">
         <div>
           <h1>Dashboard</h1>
-          <p style="color:var(--slate-500);font-size:0.9rem">Welcome back, Apex Electronics</p>
+          <p style="color:var(--slate-500);font-size:0.9rem;margin-top:4px">Welcome back, Apex Electronics — here's your shipment overview</p>
         </div>
         <div class="search-bar">
           <span>🔍</span>
-          <input type="text" placeholder="Search shipments...">
+          <input type="text" placeholder="Search shipments..." id="shipmentSearch">
         </div>
       </div>
 
@@ -93,24 +108,27 @@
       </div>
 
       <!-- LIVE MAP -->
-      <div class="panel" id="map-section">
+      <div class="panel" id="map-section" style="overflow:hidden">
         <div class="panel-header">
           <h3>🗺 Live Shipment Map</h3>
-          <span class="badge badge-success">● Live</span>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:0.8rem;color:var(--slate-500)">Auto-refresh: 30s</span>
+            <span class="badge badge-success">● Live</span>
+          </div>
         </div>
-        <div class="panel-body" style="padding:0;position:relative">
+        <div style="position:relative">
           <div class="map-container">
             <div id="trackingMap"></div>
-            <div class="eta-card">
-              <h4>Next Arrival</h4>
-              <div class="eta-time">Mar 12</div>
-              <div class="eta-date">FC-2026-00139 • JFK, New York</div>
-              <div style="margin-top:8px">
-                <div class="progress-bar">
-                  <div class="fill blue" style="width:80%"></div>
-                </div>
-                <span style="font-size:0.75rem;color:var(--slate-500)">80% complete</span>
+          </div>
+          <div class="eta-card">
+            <h4>Next Arrival</h4>
+            <div class="eta-time">Mar 12</div>
+            <div class="eta-date">FC-2026-00139 • JFK, New York</div>
+            <div style="margin-top:10px">
+              <div class="progress-bar" style="height:6px">
+                <div class="fill blue" style="width:80%"></div>
               </div>
+              <span style="font-size:0.75rem;color:var(--slate-500)">80% complete</span>
             </div>
           </div>
         </div>
@@ -120,17 +138,18 @@
       <div class="panel" id="shipments-section">
         <div class="panel-header">
           <h3>📦 Active Shipments</h3>
-          <div style="display:flex;gap:8px">
-            <select style="padding:6px 12px;border:1px solid var(--slate-300);border-radius:4px;font-family:'Montserrat',sans-serif;font-size:0.85rem">
-              <option>All Status</option>
-              <option>In Transit</option>
-              <option>In Customs</option>
-              <option>Delivered</option>
-              <option>Pending</option>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span style="font-size:0.8rem;color:var(--slate-500)">Click a row for details</span>
+            <select style="padding:6px 12px;border:1px solid var(--slate-300);border-radius:4px;font-family:'Montserrat',sans-serif;font-size:0.85rem" id="statusFilter" onchange="filterShipments()">
+              <option value="">All Status</option>
+              <option value="in-transit">In Transit</option>
+              <option value="customs">In Customs</option>
+              <option value="delivered">Delivered</option>
+              <option value="pending">Pending</option>
             </select>
           </div>
         </div>
-        <div class="panel-body" style="overflow-x:auto">
+        <div class="panel-body" style="overflow-x:auto;padding:0">
           <table>
             <thead>
               <tr>
@@ -153,6 +172,7 @@
       <div class="panel">
         <div class="panel-header">
           <h3>🕐 Recent Activity</h3>
+          <a href="#" style="font-size:0.85rem;color:var(--primary);font-weight:600">View All</a>
         </div>
         <div class="panel-body">
           <div class="timeline">
@@ -189,9 +209,9 @@
 
   <!-- NOTIFICATION PANEL -->
   <div class="notification-panel" id="notificationPanel">
-    <div class="panel-header">
-      <h3 style="font-family:'Montserrat',sans-serif;font-size:1rem">Notifications</h3>
-      <button id="closeNotifPanel" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--slate-400)">×</button>
+    <div class="panel-header" style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="font-family:'Montserrat',sans-serif;font-size:1rem;margin:0">Notifications</h3>
+      <button id="closeNotifPanel" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:var(--slate-400);line-height:1">×</button>
     </div>
     <div class="notification-list" id="notificationList"></div>
   </div>
@@ -209,5 +229,37 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    // Search filter for shipments
+    document.getElementById('shipmentSearch')?.addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      document.querySelectorAll('#shipmentTableBody tr').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+
+    // Status filter
+    function filterShipments() {
+      const status = document.getElementById('statusFilter').value;
+      const rows = document.querySelectorAll('#shipmentTableBody tr');
+      rows.forEach(row => {
+        if (!status) { row.style.display = ''; return; }
+        const badge = row.querySelector('.badge');
+        const rowStatus = badge ? badge.textContent.toLowerCase() : '';
+        const match = {
+          'in-transit': 'in transit',
+          'customs': 'in customs',
+          'delivered': 'delivered',
+          'pending': 'pending'
+        };
+        row.style.display = rowStatus.includes(match[status] || status) ? '' : 'none';
+      });
+    }
+
+    // Show mobile toggle on small screens
+    if (window.innerWidth <= 768) {
+      document.querySelector('.mobile-toggle').style.display = 'block';
+    }
+  </script>
 </body>
 </html>

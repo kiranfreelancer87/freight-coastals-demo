@@ -329,22 +329,31 @@ function initMap() {
   const mapEl = document.getElementById('trackingMap');
   if (!mapEl) return;
 
-  const map = L.map('trackingMap').setView([25, -20], 2);
+  const map = L.map('trackingMap', {
+    scrollWheelZoom: false,
+    zoomControl: true
+  }).setView([30, 0], 2);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
+    attribution: '&copy; OpenStreetMap contributors',
+    maxZoom: 18
   }).addTo(map);
 
+  // Fix Leaflet rendering in hidden/dynamic containers
+  setTimeout(() => { map.invalidateSize(); }, 300);
+
   const shipIcon = L.divIcon({
-    html: '<div style="background:var(--primary);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3)">🚢</div>',
+    html: '<div style="background:#1a5a40;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.35)">🚢</div>',
     className: '',
-    iconSize: [30, 30]
+    iconSize: [32, 32],
+    iconAnchor: [16, 16]
   });
 
   const planeIcon = L.divIcon({
-    html: '<div style="background:var(--info);color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.3)">✈</div>',
+    html: '<div style="background:#3b82f6;color:#fff;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;border:3px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,0.35)">✈</div>',
     className: '',
-    iconSize: [30, 30]
+    iconSize: [32, 32],
+    iconAnchor: [16, 16]
   });
 
   demoShipments.forEach(s => {

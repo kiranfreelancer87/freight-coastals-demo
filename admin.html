@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Freight Coastals</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">⚓ Freight <span>Coastals</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li>
+        <a href="#" id="notifToggle" class="notif-badge">
+          🔔 <span class="count">3</span>
+        </a>
+      </li>
+      <li><a href="login.html" class="btn-login">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- LAYOUT -->
+  <div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <div class="avatar">AD</div>
+        <div class="name">Admin Panel</div>
+        <div class="role">Operations Manager</div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active"><span class="icon">📊</span> Overview</a></li>
+        <li><a href="#all-shipments"><span class="icon">📦</span> All Shipments</a></li>
+        <li><a href="#map-section"><span class="icon">🗺</span> Fleet Map</a></li>
+        <li><a href="#" onclick="document.getElementById('notificationPanel').classList.toggle('open')"><span class="icon">🔔</span> Alerts <span class="badge badge-danger" style="margin-left:auto;font-size:0.65rem">3</span></a></li>
+        <li><a href="#"><span class="icon">👥</span> Customers</a></li>
+        <li><a href="#"><span class="icon">🚛</span> Carriers</a></li>
+        <li><a href="#"><span class="icon">📄</span> Reports</a></li>
+        <li><a href="#"><span class="icon">💰</span> Billing</a></li>
+        <li><a href="#"><span class="icon">⚙</span> Settings</a></li>
+        <li><a href="login.html"><span class="icon">🚪</span> Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div>
+          <h1>Admin Overview</h1>
+          <p style="color:var(--slate-500);font-size:0.9rem">Operations control center</p>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-green" onclick="showToast('Report generated successfully','success')">📄 Generate Report</button>
+          <button class="btn btn-primary" onclick="showToast('New shipment form coming soon','info')">+ New Shipment</button>
+        </div>
+      </div>
+
+      <!-- STAT CARDS -->
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-icon blue">📦</div>
+          <div class="stat-info">
+            <h4>Total Shipments</h4>
+            <div class="number">342</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✓</div>
+          <div class="stat-info">
+            <h4>Delivered (MTD)</h4>
+            <div class="number">287</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">⚠</div>
+          <div class="stat-info">
+            <h4>Delayed</h4>
+            <div class="number">8</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">💰</div>
+          <div class="stat-info">
+            <h4>Revenue (MTD)</h4>
+            <div class="number">$1.2M</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="admin-grid">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>📈 Monthly Shipments</h3>
+            <select style="padding:4px 10px;border:1px solid var(--slate-300);border-radius:4px;font-size:0.8rem;font-family:'Montserrat',sans-serif">
+              <option>2026</option>
+              <option>2025</option>
+            </select>
+          </div>
+          <div class="panel-body" id="barChart"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <h3>📊 By Transport Mode</h3>
+          </div>
+          <div class="panel-body" id="donutChart"></div>
+        </div>
+      </div>
+
+      <!-- FLEET MAP -->
+      <div class="panel" id="map-section">
+        <div class="panel-header">
+          <h3>🗺 Fleet Tracking Map</h3>
+          <span class="badge badge-success">● Live</span>
+        </div>
+        <div class="panel-body" style="padding:0">
+          <div class="map-container">
+            <div id="trackingMap"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERFORMANCE METRICS -->
+      <div class="admin-grid">
+        <div class="panel">
+          <div class="panel-header"><h3>📋 Delivery Performance</h3></div>
+          <div class="panel-body">
+            <div style="margin-bottom:1.2rem">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
+                <span style="font-size:0.85rem;font-weight:600">On-Time Delivery</span>
+                <span style="font-size:0.85rem;color:var(--success);font-weight:600">94%</span>
+              </div>
+              <div class="progress-bar"><div class="fill green" style="width:94%"></div></div>
+            </div>
+            <div style="margin-bottom:1.2rem">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
+                <span style="font-size:0.85rem;font-weight:600">Customer Satisfaction</span>
+                <span style="font-size:0.85rem;color:var(--info);font-weight:600">91%</span>
+              </div>
+              <div class="progress-bar"><div class="fill blue" style="width:91%"></div></div>
+            </div>
+            <div style="margin-bottom:1.2rem">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
+                <span style="font-size:0.85rem;font-weight:600">Customs Clearance Rate</span>
+                <span style="font-size:0.85rem;color:var(--warning);font-weight:600">87%</span>
+              </div>
+              <div class="progress-bar"><div class="fill orange" style="width:87%"></div></div>
+            </div>
+            <div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.4rem">
+                <span style="font-size:0.85rem;font-weight:600">Damage-Free Rate</span>
+                <span style="font-size:0.85rem;color:var(--success);font-weight:600">99.2%</span>
+              </div>
+              <div class="progress-bar"><div class="fill green" style="width:99.2%"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><h3>🏆 Top Customers (MTD)</h3></div>
+          <div class="panel-body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Shipments</th>
+                  <th>Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Apex Electronics</strong></td>
+                  <td>45</td>
+                  <td>$185,000</td>
+                </tr>
+                <tr>
+                  <td><strong>GreenLeaf Foods</strong></td>
+                  <td>38</td>
+                  <td>$142,000</td>
+                </tr>
+                <tr>
+                  <td><strong>NovaPharma Inc</strong></td>
+                  <td>32</td>
+                  <td>$198,000</td>
+                </tr>
+                <tr>
+                  <td><strong>TechVault Ltd</strong></td>
+                  <td>28</td>
+                  <td>$96,000</td>
+                </tr>
+                <tr>
+                  <td><strong>AutoParts Global</strong></td>
+                  <td>24</td>
+                  <td>$112,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ALL SHIPMENTS TABLE -->
+      <div class="panel" id="all-shipments">
+        <div class="panel-header">
+          <h3>📦 All Shipments</h3>
+          <div style="display:flex;gap:8px">
+            <div class="search-bar" style="max-width:250px">
+              <span>🔍</span>
+              <input type="text" placeholder="Search...">
+            </div>
+            <select style="padding:6px 12px;border:1px solid var(--slate-300);border-radius:4px;font-family:'Montserrat',sans-serif;font-size:0.85rem">
+              <option>All Status</option>
+              <option>In Transit</option>
+              <option>In Customs</option>
+              <option>Delivered</option>
+              <option>Pending</option>
+              <option>Delayed</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel-body" style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Tracking ID</th>
+                <th>Customer</th>
+                <th>Route</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>ETA</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminShipmentTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RECENT ALERTS -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3>🚨 Recent Alerts</h3>
+          <a href="#" style="font-size:0.85rem;color:var(--primary);font-weight:600">View All</a>
+        </div>
+        <div class="panel-body">
+          <div class="timeline">
+            <div class="timeline-item active">
+              <div class="dot"></div>
+              <div class="time">Today, 09:00 AM — CUSTOMS HOLD</div>
+              <div class="title">FC-2026-00139 requires additional documentation</div>
+              <div class="desc">NovaPharma shipment held at JFK customs — missing FDA import permit. Customer notified automatically.</div>
+            </div>
+            <div class="timeline-item completed">
+              <div class="dot"></div>
+              <div class="time">Today, 07:30 AM — WEATHER ALERT</div>
+              <div class="title">Storm advisory for North Atlantic routes</div>
+              <div class="desc">Potential 12-24hr delay for vessels on US East Coast → Europe lanes. FC-2026-00145 may be affected.</div>
+            </div>
+            <div class="timeline-item completed">
+              <div class="dot"></div>
+              <div class="time">Yesterday — CAPACITY WARNING</div>
+              <div class="title">Shanghai port congestion expected next week</div>
+              <div class="desc">Port authority advisory: 2-3 day vessel queue expected Mar 15-20. Consider alternative routing.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notification-panel" id="notificationPanel">
+    <div class="panel-header">
+      <h3 style="font-family:'Montserrat',sans-serif;font-size:1rem">Notifications</h3>
+      <button id="closeNotifPanel" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--slate-400)">×</button>
+    </div>
+    <div class="notification-list" id="notificationList"></div>
+  </div>
+
+  <!-- SHIPMENT DETAIL MODAL -->
+  <div class="modal-overlay" id="shipmentModal" onclick="if(event.target===this)closeModal('shipmentModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Shipment Details</h3>
+        <button class="modal-close" onclick="closeModal('shipmentModal')">×</button>
+      </div>
+      <div class="modal-body" id="shipmentModalBody"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

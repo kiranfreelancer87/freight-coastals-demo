@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Freight Coastals</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">⚓ Freight <span>Coastals</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li>
+        <a href="#" id="notifToggle" class="notif-badge">
+          🔔 <span class="count">3</span>
+        </a>
+      </li>
+      <li><a href="login.html" class="btn-login">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- LAYOUT -->
+  <div class="dashboard-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <div class="avatar">AE</div>
+        <div class="name">Apex Electronics</div>
+        <div class="role">Customer Account</div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="#" class="active"><span class="icon">📊</span> Dashboard</a></li>
+        <li><a href="#shipments-section"><span class="icon">📦</span> My Shipments</a></li>
+        <li><a href="#map-section"><span class="icon">🗺</span> Live Map</a></li>
+        <li><a href="#" onclick="document.getElementById('notificationPanel').classList.toggle('open')"><span class="icon">🔔</span> Notifications <span class="badge badge-danger" style="margin-left:auto;font-size:0.65rem">3</span></a></li>
+        <li><a href="#"><span class="icon">📄</span> Documents</a></li>
+        <li><a href="#"><span class="icon">💰</span> Invoices</a></li>
+        <li><a href="#"><span class="icon">⚙</span> Settings</a></li>
+        <li><a href="login.html"><span class="icon">🚪</span> Sign Out</a></li>
+      </ul>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div>
+          <h1>Dashboard</h1>
+          <p style="color:var(--slate-500);font-size:0.9rem">Welcome back, Apex Electronics</p>
+        </div>
+        <div class="search-bar">
+          <span>🔍</span>
+          <input type="text" placeholder="Search shipments...">
+        </div>
+      </div>
+
+      <!-- STAT CARDS -->
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-icon blue">📦</div>
+          <div class="stat-info">
+            <h4>Active Shipments</h4>
+            <div class="number">5</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">✓</div>
+          <div class="stat-info">
+            <h4>Delivered (MTD)</h4>
+            <div class="number">23</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">⏱</div>
+          <div class="stat-info">
+            <h4>In Customs</h4>
+            <div class="number">1</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple">🌍</div>
+          <div class="stat-info">
+            <h4>Countries</h4>
+            <div class="number">12</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE MAP -->
+      <div class="panel" id="map-section">
+        <div class="panel-header">
+          <h3>🗺 Live Shipment Map</h3>
+          <span class="badge badge-success">● Live</span>
+        </div>
+        <div class="panel-body" style="padding:0;position:relative">
+          <div class="map-container">
+            <div id="trackingMap"></div>
+            <div class="eta-card">
+              <h4>Next Arrival</h4>
+              <div class="eta-time">Mar 12</div>
+              <div class="eta-date">FC-2026-00139 • JFK, New York</div>
+              <div style="margin-top:8px">
+                <div class="progress-bar">
+                  <div class="fill blue" style="width:80%"></div>
+                </div>
+                <span style="font-size:0.75rem;color:var(--slate-500)">80% complete</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SHIPMENTS TABLE -->
+      <div class="panel" id="shipments-section">
+        <div class="panel-header">
+          <h3>📦 Active Shipments</h3>
+          <div style="display:flex;gap:8px">
+            <select style="padding:6px 12px;border:1px solid var(--slate-300);border-radius:4px;font-family:'Montserrat',sans-serif;font-size:0.85rem">
+              <option>All Status</option>
+              <option>In Transit</option>
+              <option>In Customs</option>
+              <option>Delivered</option>
+              <option>Pending</option>
+            </select>
+          </div>
+        </div>
+        <div class="panel-body" style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Tracking ID</th>
+                <th>Customer</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>ETA</th>
+                <th>Progress</th>
+              </tr>
+            </thead>
+            <tbody id="shipmentTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3>🕐 Recent Activity</h3>
+        </div>
+        <div class="panel-body">
+          <div class="timeline">
+            <div class="timeline-item completed">
+              <div class="dot"></div>
+              <div class="time">Today, 08:00 AM</div>
+              <div class="title">GPS Position Updated</div>
+              <div class="desc">FC-2026-00142 position updated — Pacific Ocean (32.5°N, 155.2°W)</div>
+            </div>
+            <div class="timeline-item completed">
+              <div class="dot"></div>
+              <div class="time">Today, 06:30 AM</div>
+              <div class="title">Customs Document Submitted</div>
+              <div class="desc">Import declaration submitted for FC-2026-00139 at JFK</div>
+            </div>
+            <div class="timeline-item completed">
+              <div class="dot"></div>
+              <div class="time">Yesterday, 03:00 PM</div>
+              <div class="title">Shipment Delivered</div>
+              <div class="desc">FC-2026-00135 (GreenLeaf Foods) delivered to Rotterdam warehouse</div>
+            </div>
+            <div class="timeline-item completed">
+              <div class="dot"></div>
+              <div class="time">Yesterday, 09:00 AM</div>
+              <div class="title">Vessel Departed</div>
+              <div class="desc">FC-2026-00145 departed Newark Port on vessel Atlantic Star</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notification-panel" id="notificationPanel">
+    <div class="panel-header">
+      <h3 style="font-family:'Montserrat',sans-serif;font-size:1rem">Notifications</h3>
+      <button id="closeNotifPanel" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--slate-400)">×</button>
+    </div>
+    <div class="notification-list" id="notificationList"></div>
+  </div>
+
+  <!-- SHIPMENT DETAIL MODAL -->
+  <div class="modal-overlay" id="shipmentModal" onclick="if(event.target===this)closeModal('shipmentModal')">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Shipment Details</h3>
+        <button class="modal-close" onclick="closeModal('shipmentModal')">×</button>
+      </div>
+      <div class="modal-body" id="shipmentModalBody"></div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
